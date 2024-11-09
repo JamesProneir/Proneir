@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+   <title>Page title</title>
+   <style>
+      *{
+         margin:0;
+         padding:0;
+      }
+      h1{
+         background-image:linear-gradient(to left,#d5f4ff,#d9ff95,#6bb0b7);
+         text-align:center;
+         padding:10px;
+      }
+      #input{
+         display:block;
+         margin:auto;
+         width:250px;
+         background-color:#303434;
+         border:black 5px groove;
+         height:30px;
+         font-size:20px;
+         margin:10px auto;
+         padding:5px;
+         color:white;
+      }
+      #format{
+         display:block;
+         margin:10px auto;
+         text-align:center;
+         font-weight:200;
+      }
+      .selectMenu{
+         border:none;
+         box-shadow:0 3px 4px black;
+         border-radius:2px;
+      }
+      #selectBox{
+         margin-top:20px;
+         display:flex;
+         flex-flow:row nowrap;
+         justify-content:space-around;
+      }
+      #box{
+         margin:30px auto auto auto ;
+         width:300px;
+         height:350px;
+         border:solid 3px black;
+         border-radius:10px;
+         padding:10px;
+         word-wrap:break-word;
+         overflow:scroll;
+      }
+      #button{
+         background-color:#4b5a56;
+         position:absolute;
+         bottom:0px;
+         right:0;
+         width:100%;
+         height:70px;
+         text-align:center;
+         line-height:70px;
+      }
+      #button button{
+         background-color:#718781;
+         box-shadow:0 0 10px black;
+         border:none;
+         border-radius:50%;
+         padding:10px;
+         width:200px;
+         height:50px;
+         color:white;
+         font-weight:500;
+         font-size:20px;
+         transition:transform 0.5s;
+      }
+      #button button:active{
+         transform:scale(1.2);
+      }
+   </style>
+</head>
+<body>
+   <h1>Converter</h1>
+   <input type="number" id="input">
+   <span id="format">Choose format</span>
+   <div id="selectBox">
+      <select name="format" class="selectMenu" id="selectMenu1" onchange="erase()">
+         <option>Text</option>
+         <option>Binary Digit</option>
+         <option>Decimal</option>
+      </select>
+      <span>TO</span>
+      <select name="format" class="selectMenu" id="selectMenu2" onchange="erase()">
+         <option>Binary Digit</option>
+         <option>Text</option>
+         <option>Decimal</option>
+      </select>
+   </div>
+   <div id="box"></div>
+   <div id="button"><button onclick="convert()">CONVERT</button></div>
+   <script>
+      function convertNum(num){
+         let binaryNo = "";
+         while(num > 0){
+            binaryNo += num%2;
+            num = Math.floor(num/2);
+            convertNum(num);
+         }
+         return binaryNo.split("").reverse().join("");
+      }
+      function convertStr(txt){
+         let arr = [];
+         for(let i = 0;i < txt.length;i++){
+            arr.push(convertNum(txt.charCodeAt(i)));
+         }
+         return arr.join(" ");
+      }
+      
+      function convertBin(bin){
+         let num = 1;
+         for(let i = 1;i < bin.length;i++){
+            if(bin.split("")[i] == 0){
+               num = num*2;
+            }
+            else if(bin.split("")[i] == 1){
+               num = num*2+1;
+            }
+            else{
+               num = "invalid";
+               break;
+            }
+         }
+         return num;
+      }
+      function convertBinToStr(bin){
+         let txt = [];
+         let binArr = bin.split(" ");
+         for(let i = 0;i < binArr.length;i++){
+            if(convertBin(binArr[i])=="invalid"){
+               txt.push("The selected format should only include 1 and 0");
+               break;
+            }else{
+               txt.push(String.fromCharCode(convertBin(binArr[i].trim())));
+            }
+         }
+         return txt.join("");
+      }
+      
+      function convertStrToNum(txt){
+         let numArr = [];
+         for(let i = 0;i < txt.length;i++){
+            numArr.push(txt.charCodeAt(i));
+         }
+         return numArr.join(" ");
+      }
+      
+      function convertBinToNum(bin){
+         let num = 1;
+         for(let i = 1;i < bin.length;i++){
+            if(bin.split("")[i] == 0){
+               num = num*2;
+            }
+            else if(bin.split("")[i] == 1){
+               num = num*2+1;
+            }
+            else{
+               num = "The selected format should only include 1 and 0";
+               break;
+            }
+         }
+         return num;
+      }
+      
+      function convertNumToBin(num){
+         let binArr = [];
+         num = num.split(" ");
+         for(let i=0;i< num.length;i++){
+            if(!isNaN(Number(num[i]))){
+               binArr.push(convertNum(num[i]));
+            }else{
+               binArr.push("Please enter numbers only with single space")
+            }
+         }
+         return binArr.join(" ");
+      }
+      
+      function convertNumToStr(num){
+         let txt = [];
+         let binArr = num.split(" ");
+         for(let i = 0;i < binArr.length;i++){
+            if(isNaN(Number(binArr[i]))){
+               txt.push("Please enter numbers only with single space");
+               break;
+            }else{
+               txt.push(String.fromCharCode(binArr[i]));
+            }
+         }
+         return txt.join("");
+      }
+      function convert(){
+         let input = document.getElementById("input");
+         let box = document.getElementById("box");
+         let selectMenu = document.getElementById("selectMenu");
+         if(selectMenu1.selectedIndex == "1" && selectMenu2.selectedIndex == "1"){
+            box.innerHTML = convertBinToStr(String(input.value));
+         }
+         else if(selectMenu1.selectedIndex == "0" && selectMenu2.selectedIndex == "0"){
+            box.innerHTML = convertStr(String(input.value));
+         }
+         else if(selectMenu1.selectedIndex == "0" && selectMenu2.selectedIndex == "2"){
+            box.innerHTML = convertStrToNum(String(input.value))
+         }
+         else if(selectMenu1.selectedIndex == "1" && selectMenu2.selectedIndex == "2"){
+            box.innerHTML = convertBinToNum(String(input.value))
+         }
+         else if(selectMenu1.selectedIndex == "2" && selectMenu2.selectedIndex == "0"){
+            box.innerHTML = convertNumToBin(String(input.value))
+         }
+         else if(selectMenu1.selectedIndex == "2" && selectMenu2.selectedIndex == "1"){
+            box.innerHTML = convertNumToStr(String(input.value))
+         }
+         else{
+            box.innerHTML = "";
+            input.value = "";
+         }
+      }
+      
+      function erase(){
+         document.getElementById("input").value ="";
+         document.getElementById("box").innerHTML ="";
+      }
+   </script>
+</body>
+</html>
